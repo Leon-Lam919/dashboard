@@ -1,5 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from google.auth import credentials
+from google.oauth2.service_account import Credentials
+from googleapiclient.discovery import build
+import os
+from dotenv import load_dotenv
 
 app = FastAPI()
 
@@ -12,14 +17,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/api/hello")
-async def hello():
-    return {"message": "Hello from FastAPI!"}
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+SPREADSHEET_ID = os.getenv('SPREADSHEET_ID')
 
-@app.get("/api/items/{item_id}")
-async def read_item(item_id: int):
-    return {"item_id": item_id, "name": f"Item {item_id}"}
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+def get_sheets_service():
+    creds = Credentials.from_service_account_file(
+        'credentials.json',
+        scopes=SCOPES
+    )
+    service = build('sheets', 'v4', credentials=creds)
+    return service
