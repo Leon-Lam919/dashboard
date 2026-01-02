@@ -3,3 +3,4 @@ Feats I want
 - TODO list has a divider between dailies and random items I want added
 - RSS feed from news
 - Tomodoro clock implementation that tracks over time the number of sessions completed
+- Budget/ money tracker (maybbe?)
