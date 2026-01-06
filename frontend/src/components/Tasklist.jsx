@@ -1,17 +1,45 @@
 import { useState } from "react"
 
+const DISPLAY_NAME = {
+  'keyboard': 'Keyboard Practice',
+  'code': 'Coding',
+  'workout': 'Workout',
+  'cardio': 'Cardio'
+}
+
 function TaskList() {
   const [tasks, setTasks] = useState([
     { name: 'Coding', completed: false },
     { name: 'Workout', completed: false },
     { name: 'Keyboard Practice', completed: false },
+    { name: 'Cardio', completed: false },
   ])
 
-  const toggleTask = (index) => {
+  const toggleTask = async (index) => {
     const list = [...tasks];
     list[index].completed = !list[index].completed;
     setTasks(list);
   }
+
+  const getAll = async () => {
+    const response = await fetch("http://localhost:8000/get_all")
+
+    if (!response.ok) {
+      console.error(await response.text())
+      return []
+    }
+
+    const data = await response.json()
+
+    return Object.entries(data).map(([name, status]) => ({
+      id: name,
+      name: formatDisplayName(name),
+      completed: status?.toLowerCase() === 'yes'
+    }))
+  }
+
+  getAll().then(tasks => console.log(tasks))
+
 
   const completedCount = tasks.filter(task => task.completed).length
 
@@ -42,7 +70,7 @@ function TaskList() {
 
       <div className="mt-6 pt-4 border-t border-gray-600">
         <p className="text-gray-400">
-          Completion: {completedCount}/3
+          Completion: {completedCount}/4
         </p>
       </div>
     </div>

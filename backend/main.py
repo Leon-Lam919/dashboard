@@ -39,11 +39,22 @@ def get_sheets_service():
 
 service = get_sheets_service()
 
-# Buisness logic function
-# internal function that checks the row on sheets that 
-# reflects today's date and returns that row in the format '#'
+
 def check_date(service, SPREADSHEET_ID, today=None) -> int:
 
+    """
+    Buisness logic function
+    Find the row number matching the given date.
+    
+    Args:
+        service: Google Sheets API service
+        sheet_id: Spreadsheet ID to search
+        today: Date to find (defaults to today)
+    
+    Returns:
+        Row number where date was found
+    """
+    
     # finds the date of today
     if today is None:
         today = datetime.date.today()
@@ -63,10 +74,23 @@ def check_date(service, SPREADSHEET_ID, today=None) -> int:
             return index+2
     raise ValueError(f"Date {today} not found in sheet")
 
-# Buisness logic function
-# handles the operation of updating the right cell with yes or no for complete or incomplete
-# returns True or False determined by if the operation went through
+
 def update_task_status(service, SPREADSHEET_ID, row: int, column: str, status: str) -> bool:
+
+    """
+    Buisness logic function
+    Updates the cell in the sheet with yes or no
+
+    Args:
+        service: Google Sheets API service
+        sheet_id: Spreadsheet ID to search
+        row: row of the sheet that corresponds with the date
+        column: the task that is being marked
+    
+    Returns:
+        true/false if the operation was successful
+    """
+    
     range_name = f"Dailies!{column}{row}"
     try:
         result = service.spreadsheets().values().update(
@@ -88,6 +112,26 @@ def update_task_status(service, SPREADSHEET_ID, row: int, column: str, status: s
 
 @app.put("/tasks/{task_id}")
 def update_task(task_id: str, status: str):
+
+    """
+    Update a task's completion status for today.
+    
+    Finds today's row in the spreadsheet and updates the specified
+    task column with "Yes" (complete) or "No" (incomplete).
+    
+    Args:
+        task_id (str): Task identifier - keyboard, code, workout, or cardio
+        status (str): "yes" or "no" (case-insensitive)
+    
+    Returns:
+        dict: {"success": True, "task": task_id}
+    
+    Raises:
+        HTTPException: 
+            - 404: task_id not valid
+            - 400: status not yes/no, or update failed
+    """
+
     col = TASK_COLUMNS.get(task_id)
     if col is None:
         raise HTTPException(status_code=404, detail="Task not found")
@@ -106,11 +150,54 @@ def update_task(task_id: str, status: str):
 
 # function that gets all the tasks in today's row and returns as dict
 def get_all_tasks(service, SPREADSHEET_ID, row: int) -> dict[str,str]:
-    today = check_date(service, SPREADSHEET_ID)
-    return {" " : " "}
+    """
+    Returns a dict of the current tasks and their status
+    
+    Args:
+        row (int): the row to read from
+    
+    Returns:
+        dict: {"keyboard": Yes/No, "code": yes/no, etc.}
+    
+    Raises:
+        return {task: "No" for task in TASK_COLUMNS.keys()}
+    """
+
+    range_name = f"Dailies!B{row}:E{row}"
+
+    result = (
+            service.spreadsheets().
+            values().
+            get(spreadsheetId=SPREADSHEET_ID, range=range_name).
+            execute()
+        )
+
+    result = result.get('values',[])
+
+    if not result:
+        # Return all tasks as "No"
+        return {task: "No" for task in TASK_COLUMNS.keys()}
+
+    values_list = result[0]
+
+    result_dict={}
+    for i in range(len(values_list)):
+        if values_list[i] == '':
+            values_list[i] = 'No'
+
+    print(values_list)
+    for index, (task_name, _) in enumerate(TASK_COLUMNS.items()):
+        result_dict[task_name] = values_list[index]
+
+    return result_dict
 
 # GET endpoint for frontend to see updated current stats of tasks
 @app.get("/get_all")
 def get_all():
-    return []
+    try:
+        today = check_date(service, SPREADSHEET_ID)
+        return get_all_tasks(service, SPREADSHEET_ID, today)
+    except Exception as e:
+        print("ERROR:", e)
+        return {}
 
