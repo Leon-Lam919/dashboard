@@ -1,4 +1,6 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import Checkbox from '@mui/joy/Checkbox';
+
 
 const DISPLAY_NAME = {
   'keyboard': 'Keyboard Practice',
@@ -8,18 +10,16 @@ const DISPLAY_NAME = {
 }
 
 function TaskList() {
-  const [tasks, setTasks] = useState([
-    { name: 'Coding', completed: false },
-    { name: 'Workout', completed: false },
-    { name: 'Keyboard Practice', completed: false },
-    { name: 'Cardio', completed: false },
-  ])
+  const [tasks, setTasks] = useState([])
 
-  const toggleTask = async (index) => {
-    const list = [...tasks];
-    list[index].completed = !list[index].completed;
-    setTasks(list);
-  }
+  // use effect calls this function on mount (refesh, new tab opening, etc.)
+  useEffect(() => {
+    const loadData = async () => {
+      const data = await getAll()
+      setTasks(data)
+    }
+    loadData()
+  }, [])
 
   const getAll = async () => {
     const response = await fetch("http://localhost:8000/get_all")
@@ -31,20 +31,49 @@ function TaskList() {
 
     const data = await response.json()
 
+    // turns the JSON into an object that
     return Object.entries(data).map(([name, status]) => ({
       id: name,
-      name: formatDisplayName(name),
       completed: status?.toLowerCase() === 'yes'
     }))
   }
 
-  getAll().then(tasks => console.log(tasks))
+  // Uses the current tasks in state and toggle one of them
+  // newList is a new array, but its items reference the same task objects, so changing a task mutates previous state.
+  // newList mutates the existing list
+  // is called every time box is checked or unchecked
+  // setTasks replaces the state with a new snapshot
+  const toggleTask = async (index) => {
+    const newList = [...tasks]
+    newList[index].completed = !newList[index].completed;
+    setTasks(newList);
+    const id = newList[index].id;
+    const completed = newList[index].completed;
+    const response = await fetch(`http://localhost:8000/tasks/${id}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          task_id: id,
+          status: completed ? "yes" : "no"
+        })
+      });
 
+    if (!response.ok) {
+      console.error(await response.text())
+      return []
+    }
 
+    const data = await response.json()
+    console.log("This is what the PUT call returned: ", data)
+
+  }
+
+  const count = Object.keys(tasks).length;
   const completedCount = tasks.filter(task => task.completed).length
 
   return (
-    <div className="bg-gray-800 rounded-lg p-6 max-w-md">
+    <div className="bg-gray-800 rounded-lg p-6 max-w-xs">
       <h2 className="text-xl font-semibold mb-4">
         {new Date().toLocaleDateString('en-US', {
           weekday: 'long',
@@ -54,26 +83,50 @@ function TaskList() {
         })}
       </h2>
 
-      <div className="space-y-3">
+      <div className="space-y-0">
         {tasks.map((task, index) => (
-          <div key={index} className="flex items-center gap-3 p-3 bg-gray-700 rounded">
-            <input
-              type="checkbox"
+          <div key={index} className="flex items-center gap-3 p-2">
+            <Checkbox
+              label={task.id}
               checked={task.completed}
               onChange={() => toggleTask(index)}
-              className="w-5 h-5"
+              size="md"
+              variant="outlined"
+              sx={{
+                // UNCHECKED state
+
+                "--Checkbox-gap": "0.5rem",
+
+                "--Checkbox-radius": "6px",
+
+                "& .MuiCheckbox-checkbox": {
+                  borderColor: "#86efac",     // light green border
+                  backgroundColor: "transparent",
+                },
+
+                // CHECKED state
+                "&.Mui-checked .MuiCheckbox-checkbox": {
+                  borderColor: "#22c55e",     // darker green
+                  backgroundColor: "#22c55e", // filled green
+                  color: "#ffffff",           // checkmark color
+                },
+
+                transition: "all 0.2s ease",
+              }}
             />
-            <span className="text-lg">{task.name}</span>
           </div>
         ))}
       </div>
 
       <div className="mt-6 pt-4 border-t border-gray-600">
         <p className="text-gray-400">
-          Completion: {completedCount}/4
+          Completion: {completedCount}/{count}
         </p>
       </div>
     </div>
+
+
+
   )
 }
 

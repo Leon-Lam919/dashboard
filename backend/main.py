@@ -6,6 +6,7 @@ from googleapiclient.discovery import build
 import os
 from dotenv import load_dotenv
 import datetime
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -15,6 +16,10 @@ TASK_COLUMNS={
     "workout": "D",
     "cardio": "E",
 }
+
+class updateData(BaseModel):
+    status: str
+
 
 # Configure CORS
 app.add_middleware(
@@ -111,7 +116,7 @@ def update_task_status(service, SPREADSHEET_ID, row: int, column: str, status: s
 # Update the spreadsheet with daily tasks
 
 @app.put("/tasks/{task_id}")
-def update_task(task_id: str, status: str):
+def update_task(task_id: str, data: updateData):
 
     """
     Update a task's completion status for today.
@@ -136,10 +141,10 @@ def update_task(task_id: str, status: str):
     if col is None:
         raise HTTPException(status_code=404, detail="Task not found")
 
-    if status.lower() not in ["yes", "no"]:
+    if data.status.lower() not in ["yes", "no"]:
         raise HTTPException(status_code=400, detail="Status must be yes or no")
     
-    status = status.capitalize()
+    status = data.status.capitalize()
     row = check_date(service, SPREADSHEET_ID)
     success = update_task_status(service, SPREADSHEET_ID, row, col, status)
 
