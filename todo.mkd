@@ -5,4 +5,3 @@ Feats I want
 - Tomodoro clock implementation that tracks over time the number of sessions completed
 - Budget/ money tracker (maybbe?)
 
-

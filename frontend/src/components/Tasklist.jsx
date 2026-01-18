@@ -11,6 +11,7 @@ const DISPLAY_NAME = {
 
 function TaskList() {
   const [tasks, setTasks] = useState([])
+  const [tempList, setTempList] = useState([])
 
   // use effect calls this function on mount (refesh, new tab opening, etc.)
   useEffect(() => {
@@ -20,6 +21,9 @@ function TaskList() {
     }
     loadData()
   }, [])
+
+  //const temp = async()
+
 
   const getAll = async () => {
     const response = await fetch("http://localhost:8000/get_all")
@@ -86,7 +90,9 @@ function TaskList() {
       <div className="space-y-0">
         {tasks.map((task, index) => (
           <div key={index} className="flex items-center gap-3 p-2">
+            {/* Put this shit into a Box class instead of checkbox */}
             <Checkbox
+              className="pb-2"
               label={task.id}
               checked={task.completed}
               onChange={() => toggleTask(index)}
@@ -98,6 +104,19 @@ function TaskList() {
                 "--Checkbox-gap": "0.5rem",
 
                 "--Checkbox-radius": "6px",
+
+                "& .MuiCheckbox-label": {
+                  color: "#6bf890",
+                  fontSize: "2 rem",
+                  fontWeight: 100,
+                },
+
+                "&.Mui-checked .MuiCheckbox-label": {
+                  color: "#16a34a",
+                  fontSize: "1 rem",
+                  textDecoration: task.completed ? "line-through" : "none",
+                  opacity: task.completed ? 0.6 : 1,
+                },
 
                 "& .MuiCheckbox-checkbox": {
                   borderColor: "#86efac",     // light green border
@@ -113,9 +132,17 @@ function TaskList() {
 
                 transition: "all 0.2s ease",
               }}
-            />
+            >
+            </Checkbox>
           </div>
         ))}
+        <div className="mt-6 pt-6 border-t border-gray-600">
+          <form>
+            <label>Task: </label>
+            <input className="bg-gray-600" type="text" />
+          </form>
+
+        </div>
       </div>
 
       <div className="mt-6 pt-4 border-t border-gray-600">

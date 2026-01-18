@@ -149,7 +149,7 @@ def update_task(task_id: str, data: updateData):
     success = update_task_status(service, SPREADSHEET_ID, row, col, status)
 
     if success:
-        return {"success": True, "task": task_id}
+        return {"success": True, "task": task_id, "status": status}
     else: 
         raise HTTPException(status_code=400, detail="Update could not be made")
 
@@ -178,13 +178,14 @@ def get_all_tasks(service, SPREADSHEET_ID, row: int) -> dict[str,str]:
         )
 
     result = result.get('values',[])
+    #TODO: this mf needs to be fixed to have 4 values always
 
     if not result:
         # Return all tasks as "No"
         return {task: "No" for task in TASK_COLUMNS.keys()}
 
     values_list = result[0]
-
+    print(values_list)
     result_dict={}
     for i in range(len(values_list)):
         if values_list[i] == '':
@@ -203,6 +204,6 @@ def get_all():
         today = check_date(service, SPREADSHEET_ID)
         return get_all_tasks(service, SPREADSHEET_ID, today)
     except Exception as e:
-        print("ERROR:", e)
+        print("Endpoint get_all ERROR:", e)
         return {}
 
