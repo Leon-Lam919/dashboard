@@ -7,7 +7,7 @@ services:
     container_name: dashboard-backend
     restart: always
     expose:
-      - "4000"  # only internal network
+      - "4000:4000"  # only internal network
     networks:
       - dashboard-net
 
