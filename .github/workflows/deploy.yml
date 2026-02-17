@@ -26,6 +26,12 @@ jobs:
       - name: Deploy to Raspberry Pi
         run: |
           ssh leonl@${{ secrets.PI_IP }} '
+
+            echo "=== CONNECTED TO: $(hostname) ==="
+            echo "=== PI IP(s): $(hostname -I) ==="
+            whoami
+            pwd
+
             # Go to home directory
             cd ~
             # Clone the repo if it doesn't exist
