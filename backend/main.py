@@ -7,6 +7,8 @@ import os
 from dotenv import load_dotenv
 import datetime
 from pydantic import BaseModel
+import time as time
+# from crontab import CronTab
 
 app = FastAPI()
 
@@ -24,7 +26,7 @@ class updateData(BaseModel):
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Vite default port
+    allow_origins=["*"],  # Vite default port
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -153,6 +155,9 @@ def update_task(task_id: str, data: updateData):
     else: 
         raise HTTPException(status_code=400, detail="Update could not be made")
 
+def pad_row(row, cols):
+    return row + [""] * (cols - len(row))
+
 # function that gets all the tasks in today's row and returns as dict
 def get_all_tasks(service, SPREADSHEET_ID, row: int) -> dict[str,str]:
     """
@@ -177,21 +182,21 @@ def get_all_tasks(service, SPREADSHEET_ID, row: int) -> dict[str,str]:
             execute()
         )
 
-    result = result.get('values',[])
-    #TODO: this mf needs to be fixed to have 4 values always
+    results = result.get('values',[])
+    results = [pad_row(result, 4) for result in results]
 
     if not result:
         # Return all tasks as "No"
         return {task: "No" for task in TASK_COLUMNS.keys()}
 
-    values_list = result[0]
-    print(values_list)
+    values_list = results[0]
+    # print(values_list)
     result_dict={}
     for i in range(len(values_list)):
         if values_list[i] == '':
             values_list[i] = 'No'
 
-    print(values_list)
+    # print(values_list)
     for index, (task_name, _) in enumerate(TASK_COLUMNS.items()):
         result_dict[task_name] = values_list[index]
 

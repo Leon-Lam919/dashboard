@@ -26,7 +26,7 @@ function TaskList() {
 
 
   const getAll = async () => {
-    const response = await fetch("http://localhost:8000/get_all")
+    const response = await fetch("/api/get_all")
 
     if (!response.ok) {
       console.error(await response.text())
@@ -53,7 +53,7 @@ function TaskList() {
     setTasks(newList);
     const id = newList[index].id;
     const completed = newList[index].completed;
-    const response = await fetch(`http://localhost:8000/tasks/${id}`,
+    const response = await fetch(`/api/tasks/${id}`,
       {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -70,7 +70,6 @@ function TaskList() {
 
     const data = await response.json()
     console.log("This is what the PUT call returned: ", data)
-
   }
 
   const count = Object.keys(tasks).length;
@@ -90,7 +89,6 @@ function TaskList() {
       <div className="space-y-0">
         {tasks.map((task, index) => (
           <div key={index} className="flex items-center gap-3 p-2">
-            {/* Put this shit into a Box class instead of checkbox */}
             <Checkbox
               className="pb-2"
               label={task.id}
@@ -136,13 +134,6 @@ function TaskList() {
             </Checkbox>
           </div>
         ))}
-        <div className="mt-6 pt-6 border-t border-gray-600">
-          <form>
-            <label>Task: </label>
-            <input className="bg-gray-600" type="text" />
-          </form>
-
-        </div>
       </div>
 
       <div className="mt-6 pt-4 border-t border-gray-600">
