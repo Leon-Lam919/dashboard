@@ -7,52 +7,16 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
-
+    runs-on: self-hosted  # Changed from ubuntu-latest
     steps:
-      # Step 1: Checkout your repo
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Setup SSH to connect to the Pi
-      - name: Setup SSH
-        env:
-          SSH_KEY: ${{ secrets.PI_SSH_KEY }}
-          PI_HOST: ${{ secrets.PI_IP }}
+      - name: Deploy
         run: |
-          set -x
-          mkdir -p ~/.ssh
-          # Write the private key from GitHub Secrets to a file
-          echo "$SSH_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          # Add Pi to known hosts
-          ssh-keyscan -H "$PI_HOST" >> ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts
-
-      - name: Debug
-        run: |
-          echo "Host is: $PI_HOST"
-          echo "Length: ${#PI_HOST}"
-        env:
-          PI_HOST: ${{ secrets.PI_IP }}
-
-      # Step 3: Deploy to Raspberry Pi
-      - name: Deploy to Raspberry Pi
-        run: |
-          ssh -o StrictHostKeyChecking=no leonl@${{ secrets.PI_IP }} '
-            cd ~
-            # Clone the repo if it doesn't exist
-            if [ ! -d dashboard ]; then
-              git clone https://github.com/Leon-Lam919/dashboard.git
-            fi
-            cd dashboard
-            # Make sure the repo is up-to-date
-            git reset --hard
-            git clean -fd
-            git pull origin master
-            # Bring down any running containers
-            docker compose down
-            # Build and start containers
-            docker compose up -d --build
-          '
-
+          cd ~/dashboard
+          git reset --hard
+          git clean -fd
+          git pull origin master
+          docker compose down
+          docker compose up -d --build
