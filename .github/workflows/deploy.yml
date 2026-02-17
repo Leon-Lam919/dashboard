@@ -1,4 +1,4 @@
-name: Deploy to Pi
+name: Deploy Dashboard to Raspberry Pi
 
 on:
   push:
@@ -10,10 +10,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      # Step 1: Checkout your repo in the GitHub runner
+      - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Step 2: Setup SSH so we can connect to the Pi
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.PI_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.PI_IP }} >> ~/.ssh/known_hosts
+
+      # Step 3: Deploy to the Raspberry Pi
       - name: Deploy to Raspberry Pi
         run: |
-          ssh leonl@${{ secrets.PI_IP }} "cd ~/dashboard && git pull && docker compose down && docker compose up -d --build"
-
+          ssh leonl@${{ secrets.PI_IP }} '
+            # Go to home directory
+            cd ~
+            # Clone the repo if it doesn't exist
+            if [ ! -d dashboard ]; then
+              git clone https://github.com/Leon-Lam919/dashboard.git
+            fi
+            cd dashboard
+            # Make sure the repo is up-to-date
+            git reset --hard
+            git clean -fd
+            git pull origin main
+            # Bring down any running containers
+            docker compose down
+            # Build and start containers
+            docker compose up -d --build
+          '
