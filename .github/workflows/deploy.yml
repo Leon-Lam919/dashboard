@@ -19,7 +19,7 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           # Write the private key from GitHub Secrets to a file
-          printf "%s\n" "${{ secrets.PI_SSH_KEY }}" > ~/.ssh/id_rsa
+          printf "%s" "${{ secrets.PI_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           # Add Pi to known hosts
           ssh-keyscan -H ${{ secrets.PI_IP }} >> ~/.ssh/known_hosts
