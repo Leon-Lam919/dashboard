@@ -2,36 +2,32 @@ name: Deploy Dashboard to Raspberry Pi
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master  # Use your actual branch name here
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout your repo in the GitHub runner
+      # Step 1: Checkout your repo
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Setup SSH so we can connect to the Pi
+      # Step 2: Setup SSH to connect to the Pi
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.PI_SSH_KEY }}" > ~/.ssh/id_rsa
+          # Write the private key from GitHub Secrets to a file
+          printf "%s\n" "${{ secrets.PI_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+          # Add Pi to known hosts
           ssh-keyscan -H ${{ secrets.PI_IP }} >> ~/.ssh/known_hosts
 
-      # Step 3: Deploy to the Raspberry Pi
+      # Step 3: Deploy to Raspberry Pi
       - name: Deploy to Raspberry Pi
         run: |
-          ssh leonl@${{ secrets.PI_IP }} '
-
-            echo "=== CONNECTED TO: $(hostname) ==="
-            echo "=== PI IP(s): $(hostname -I) ==="
-            whoami
-            pwd
-
-            # Go to home directory
+          ssh -o StrictHostKeyChecking=no leonl@${{ secrets.PI_IP }} '
             cd ~
             # Clone the repo if it doesn't exist
             if [ ! -d dashboard ]; then
@@ -47,3 +43,4 @@ jobs:
             # Build and start containers
             docker compose up -d --build
           '
+
