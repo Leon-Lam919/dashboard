@@ -42,7 +42,7 @@ jobs:
             # Make sure the repo is up-to-date
             git reset --hard
             git clean -fd
-            git pull origin main
+            git pull origin master
             # Bring down any running containers
             docker compose down
             # Build and start containers
