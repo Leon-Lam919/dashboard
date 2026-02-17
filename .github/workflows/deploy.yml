@@ -16,14 +16,25 @@ jobs:
 
       # Step 2: Setup SSH to connect to the Pi
       - name: Setup SSH
+        env:
+          SSH_KEY: ${{ secrets.PI_SSH_KEY }}
+          PI_HOST: ${{ secrets.PI_IP }}
         run: |
           set -x
           mkdir -p ~/.ssh
           # Write the private key from GitHub Secrets to a file
-          echo "${{ secrets.PI_SSH_KEY }}" > ~/.ssh/id_rsa
+          echo "$SSH_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           # Add Pi to known hosts
-          ssh-keyscan -H ${{ secrets.PI_IP }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H "$PI_HOST" >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Debug
+      run: |
+        echo "Host is: $PI_HOST"
+        echo "Length: ${#PI_HOST}"
+      env:
+        PI_HOST: ${{ secrets.PI_IP }}
 
       # Step 3: Deploy to Raspberry Pi
       - name: Deploy to Raspberry Pi
