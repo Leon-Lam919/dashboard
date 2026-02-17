@@ -16,7 +16,7 @@ jobs:
       # Step 2: Setup SSH so we can connect to the Pi
       - name: Setup SSH
         run: |
-          mkdir -p ~/.ssh
+          mkdir -p $HOME/.ssh
           echo "${{ secrets.PI_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.PI_IP }} >> ~/.ssh/known_hosts
