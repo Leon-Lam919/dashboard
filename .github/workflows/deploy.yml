@@ -2,8 +2,7 @@ name: Deploy Dashboard to Raspberry Pi
 
 on:
   push:
-    branches:
-      - main
+    branches: [ master ]
 
 jobs:
   deploy:
