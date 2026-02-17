@@ -15,5 +15,5 @@ jobs:
 
       - name: Deploy to Raspberry Pi
         run: |
-          ssh pi@${{ secrets.PI_IP }} "cd ~/dashboard && git pull && docker compose down && docker compose up -d --build"
+          ssh leonl@${{ secrets.PI_IP }} "cd ~/dashboard && git pull && docker compose down && docker compose up -d --build"
 
