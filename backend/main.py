@@ -175,33 +175,34 @@ def get_all_tasks(service, SPREADSHEET_ID, row: int) -> dict[str,str]:
 
     range_name = f"Dailies!B{row}:E{row}"
 
-    result = (
+    api_call = (
             service.spreadsheets().
             values().
             get(spreadsheetId=SPREADSHEET_ID, range=range_name).
             execute()
         )
 
-    results = result.get('values',[])
+    results = api_call.get('values',[])
+
+    if not results:
+        # Return all tasks as "No"
+        list = {task: "No" for task in TASK_COLUMNS.keys()}
+        return list
+
     results = [pad_row(result, 4) for result in results]
 
-    if not result:
-        # Return all tasks as "No"
-        return {task: "No" for task in TASK_COLUMNS.keys()}
-
     values_list = results[0]
-    # print(values_list)
     result_dict={}
     for i in range(len(values_list)):
         if values_list[i] == '':
             values_list[i] = 'No'
 
-    # print(values_list)
     for index, (task_name, _) in enumerate(TASK_COLUMNS.items()):
         result_dict[task_name] = values_list[index]
 
     return result_dict
 
+get_all_tasks(service, SPREADSHEET_ID, 142)
 # GET endpoint for frontend to see updated current stats of tasks
 @app.get("/get_all")
 def get_all():
