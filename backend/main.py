@@ -81,6 +81,7 @@ def check_date(service, SPREADSHEET_ID, today=None) -> int:
             return index+2
     raise ValueError(f"Date {today} not found in sheet")
 
+check_date(service, SPREADSHEET_ID)
 
 def update_task_status(service, SPREADSHEET_ID, row: int, column: str, status: str) -> bool:
 

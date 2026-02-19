@@ -1,9 +1,9 @@
-version: "3.9"
-
 services:
   backend:
     build:
       context: ./backend
+    enviromment:
+      - TZ=America/Chicago
     container_name: dashboard-backend
     restart: always
     ports:
