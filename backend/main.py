@@ -202,7 +202,6 @@ def get_all_tasks(service, SPREADSHEET_ID, row: int) -> dict[str,str]:
 
     return result_dict
 
-get_all_tasks(service, SPREADSHEET_ID, 142)
 # GET endpoint for frontend to see updated current stats of tasks
 @app.get("/get_all")
 def get_all():
