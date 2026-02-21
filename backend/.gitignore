@@ -4,3 +4,4 @@ __pycache__/
 venv/
 *.pyc
 logs/cron.log
+logs/cron_debug.log
