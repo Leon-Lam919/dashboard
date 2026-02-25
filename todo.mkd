@@ -5,7 +5,3 @@ Feats I want
 - Budget/ money tracker (maybbe?)
 
 
-Stream todo for 2/11
---------------------
-- set up CI/CD pipeline
-- deploy (vercel?)
