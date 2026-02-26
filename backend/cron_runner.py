@@ -7,7 +7,7 @@ from fastapi.routing import serialize_response
 
 load_dotenv(Path("/home/theo/dashboard/backend/.env"))
 
-from main import get_all_tasks, check_date, update_task_status, get_sheets_service
+from services.google_sheets_services import *
 
 with open("/home/theo/dashboard/backend/logs/cron_debug.log", "a") as f:
     f.write(f"Script started at {date.today()}\n")
