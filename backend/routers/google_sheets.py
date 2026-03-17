@@ -23,6 +23,22 @@ def get_all():
         print("Endpoint get_all ERROR:", e)
         return {}
 
+@router.get("/health")
+def health():
+    return {"status": "successful", "service":"FastAPI" }
+
+@router.get("/ready")
+def ready():
+    try:
+        result = get_sheets_service()
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=str(e))
+
+    if result:
+        return {"status": "successful", "service": 'google sheets'}
+    else:
+        raise HTTPException(status_code=503, detail="google sheets returned empty")
+
 
 # API endpoint that handles the call from the frontend
 # Update the spreadsheet with daily tasks
