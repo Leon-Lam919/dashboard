@@ -22,8 +22,6 @@ function TaskList() {
     loadData()
   }, [])
 
-  //const temp = async()
-
 
   const getAll = async () => {
     const response = await fetch("/api/get_all")
@@ -69,7 +67,7 @@ function TaskList() {
     }
 
     const data = await response.json()
-    console.log("This is what the PUT call returned: ", data)
+    console.log(data)
   }
 
   const count = Object.keys(tasks).length;
