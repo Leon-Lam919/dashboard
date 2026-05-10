@@ -4,4 +4,9 @@ Feats I want
 - Tomodoro clock implementation that tracks over time the number of sessions completed
 - Budget/ money tracker (maybbe?)
 
-
+TODO list
+---------
+- move the google sheets into db
+- fix frontend news, needs to be in its own container
+- fix sorting
+- fix tagging for choosing single news source
