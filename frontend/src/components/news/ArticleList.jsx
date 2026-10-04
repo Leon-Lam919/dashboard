@@ -5,7 +5,9 @@ function ArticleList({ articles }) {
     <div key={article.link}>
       <ArticleCard {...article} /></div>)
 
-  return <div className="justify-items-start">{arr}</div>
+  return (
+    <div className="justify-items-start">{arr}</div>
+  )
 }
 
 export default ArticleList

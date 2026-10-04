@@ -49,7 +49,7 @@ function NewsWidget() {
   console.log('filtered articles:', filter)
 
   return (
-    <div>
+    <div className="max-w-xs mx-0 mt-10 px-4 bg-blue border border-gray-200 rounded-lg h-96 overflow-y-auto">
       <FilterBar
         sources={srcs}
         activeSource={activeSource}

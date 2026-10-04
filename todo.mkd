@@ -3,6 +3,7 @@ Feats I want
 - RSS feed from news
 - Tomodoro clock implementation that tracks over time the number of sessions completed
 - Budget/ money tracker (maybbe?)
+- coffee chat tracker
 
 TODO list
 ---------
