@@ -6,7 +6,7 @@ function FilterBar({ sources, activeSource, sortOrder, onSourceChange, onSortCha
       className={` ml-2 ${source === activeSource ? 'bg-sky-300' : 'bg-sky-950'}`}
     >
       {source}
-    </button>
+    </button >
   )
 
   return (

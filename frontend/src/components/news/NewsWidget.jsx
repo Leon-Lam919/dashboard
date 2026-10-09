@@ -33,10 +33,11 @@ function NewsWidget() {
     return data
   };
 
+  // TODO: Fix filtering for single active source
+
   const filter = useMemo(() => {
     const filtered = articles.filter((article) => activeSource === 'all' || article.source === activeSource)
     console.log('activeSource:', activeSource)
-    console.log('article.source sample:', articles[0]?.source)
     const sorted = filtered.sort((oldDate, newDate) => {
       return sortOrder === 'newest' ? new Date(oldDate.date) - new Date(newDate.date) : new Date(newDate.date) - new Date(oldDate.date)
     })
