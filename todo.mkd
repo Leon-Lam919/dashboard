@@ -11,3 +11,21 @@ TODO list
 - fix frontend news, needs to be in its own container
 - fix sorting
 - fix tagging for choosing single news source
+
+Currently working on
+--------------------
+Block 1 (minimal tests):
+[x] pytest set up
+[ ] news_outlet: Asr, BBC, hackernews, unknown sites
+[ ] commit code
+
+Mocked network (get_news):
+[ ]
+
+API routes (routers/RSS_news.py)
+[ ]
+[ ]
+
+CI:
+[ ]
+[ ]
