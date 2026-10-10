@@ -27,7 +27,6 @@ def get_news():
 
     for post in posts:
         feed = feed_model(title=post.title, description=post.description, link=post.link, date=datetime.datetime.fromtimestamp(calendar.timegm(post.published_parsed)),  source=news_outlet(post.link))
-        print(feed.link)
         all_posts.append(feed)
 
 
@@ -36,5 +35,3 @@ def get_news():
         all_posts.append(YC)
 
     return all_posts
-
-get_news()
