@@ -15,6 +15,8 @@ def news_outlet(outlet):
         if source.value in split:
             return source
 
+    return news.OTHER
+
 def get_news():
     posts = []
 

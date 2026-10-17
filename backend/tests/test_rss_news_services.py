@@ -15,11 +15,11 @@ def test_bbc_link_maps_to_bbc():
     result = news_outlet("https://www.bbc.com/sport/formula1/articles/cmn4ezn5ep3jo")
     assert result == news.BBC
 
-def test_unknown_link_maps_to_none():
+def test_unknown_link_maps_to_other():
     result = news_outlet("https://google.com/")
-    assert result is None
+    assert result == news.OTHER
 
-def test_blank_link_returns_none():
+def test_blank_link_returns_other():
     result = news_outlet(" ")
-    assert result is None
+    assert result == news.OTHER
 

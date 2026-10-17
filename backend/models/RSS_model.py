@@ -8,6 +8,7 @@ class news (Enum):
     TECHNICA = 'arstechnica'
     BBC = 'bbc'
     YC = 'ycCombinator'
+    OTHER = "other"
 
 class feed_model(BaseModel):
     model_config = ConfigDict(use_enum_values=True)
