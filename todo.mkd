@@ -11,16 +11,18 @@ TODO list
 - fix frontend news, needs to be in its own container
 - fix sorting
 - fix tagging for choosing single news source
+- create a hashmap for the news sources, so mapping is easier per source
 
 Currently working on
 --------------------
 Block 1 (minimal tests):
 [x] pytest set up
-[ ] news_outlet: Asr, BBC, hackernews, unknown sites
-[ ] commit code
+[x] news_outlet: Asr, BBC, hackernews
+[x] unknown sites
+[x] commit code
 
 Mocked network (get_news):
-[ ]
+[x] test potential new sources with missing data pieces and bridge gap
 
 API routes (routers/RSS_news.py)
 [ ]

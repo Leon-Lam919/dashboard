@@ -42,7 +42,7 @@ def get_news():
 
 
     for entry in feedparser.parse(HN_URL).entries:
-        
+
         date = entry.published_parsed or entry.updated_parsed
 
         if date is None:
